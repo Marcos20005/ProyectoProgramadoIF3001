@@ -1,7 +1,8 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
 
-        System.out.println("Prueba");
+        Interfaz interfaz= new Interfaz();
+        interfaz.setLocationRelativeTo(null);
+        interfaz.setVisible(true);
     }
 }
