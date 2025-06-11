@@ -1,5 +1,6 @@
 // NodoHangar.java
 public class NodoHangar {
+// Atributos de la clase NodoHangar
     Avion avion;
     NodoHangar siguiente;
 

@@ -1,7 +1,5 @@
-// Cliente.java
-
 public class Cliente {
-
+ //Declaracion de atributos de la clase Cliente
     private String nombre;
     private int pasaporte;
     private int numeroAsientos;
@@ -9,6 +7,7 @@ public class Cliente {
     private float montoAPagar;
     private String tipoPago;
 
+    //Constructor de la clase Cliente
     public Cliente(String nombre, int pasaporte, int numeroAsientos, float montoAPagar, String tipoPago) {
         this.nombre = nombre;
         this.pasaporte = pasaporte;
@@ -17,6 +16,8 @@ public class Cliente {
         this.tipoPago = tipoPago;
     }
 
+
+    //Getter y setter de la clase
     public String getNombre() {
         return nombre;
     }

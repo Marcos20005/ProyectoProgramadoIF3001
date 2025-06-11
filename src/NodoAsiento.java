@@ -1,5 +1,5 @@
-// NodoAsiento.java
 public class NodoAsiento {
+    //Atributos de la clase NodoAsiento
     int numeroAsiento;
     NodoAsiento siguiente;
 

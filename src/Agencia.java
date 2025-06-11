@@ -1,18 +1,19 @@
-// Agencia.java
 public class Agencia {
+
+    //Declaracion de atributos de la clase Agencia
     private Lista hangar = new Lista();
     private ListaClientes clientes = new ListaClientes();
     private Lista avionesTotales = new Lista();
     private int vuelosEfectuados = 0;
     private float recaudacionTotal = 0;
 
-    // 1) Alta de vuelo
+    //Metodo declarado para insertar los aviones en los hangares
     public void altaVuelo(Avion a) {
         hangar.insertar(a);
         avionesTotales.insertar(a);
     }
 
-    // 2) Reserva
+    //Metodo declarado para reservar y agregar un cliente al vuelo
     public Ticket reservar(String nombre, int pasaporte,
                           Avion vuelo, int cantidad, String seccion, String tipoPago) {
         if (clientes.buscarPorPasaporte(pasaporte) != null) {
@@ -33,7 +34,7 @@ public class Agencia {
         return new Ticket(c, vuelo);
     }
 
-    // 3) Despegue (simula y quita el primer vuelo en hangar)
+//Metodo declarado para simular el despegue de un vuelo
     public Avion despegue() {
         Avion primero = hangar.obtenerPrimerVuelo();
         if (primero != null) {
@@ -43,7 +44,7 @@ public class Agencia {
         return primero;
     }
 
-    // 4) Reporte fin de día
+    //Reporte final de día
    public String reporteFinDia() {
     int totalVendidos = 0;
     int totalLibres = 0;
@@ -90,7 +91,7 @@ public class Agencia {
     return txt;
 }
 
-    /** Devuelve un arreglo de todos los vuelos aún en hangar */
+    // Devuelve un arreglo de todos los vuelos aún en hangar 
     public Avion[] obtenerVuelosEnHangar() {
         int count = 0;
         NodoHangar aux = hangar.getRaiz();

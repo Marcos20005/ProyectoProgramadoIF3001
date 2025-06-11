@@ -1,15 +1,13 @@
-// Ticket.java
-
 public class Ticket {
-
+// Atributos de la clase Ticket
     private Cliente cliente;
     private Avion vuelo;
-
+// Constructor de la clase Ticket
     public Ticket(Cliente cliente, Avion vuelo) {
         this.cliente = cliente;
         this.vuelo = vuelo;
     }
-
+//Metodo declarado para ontener toda la informacion de un ticket generado
     public String generarTexto() {
         String txt = "";
         txt += "----- TICKET DE RESERVA -----\n";

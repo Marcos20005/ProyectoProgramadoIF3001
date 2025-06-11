@@ -3,7 +3,7 @@
 import java.time.LocalTime;
 
 public class Avion {
-
+//Declaracion de atributos necesarios para el avion
     private String nombreCapitan, origen, destino;
     private int capacidad, nClaseEjecutiva, nClaseEconomica;
     private String escala;
@@ -12,14 +12,10 @@ public class Avion {
     private boolean enElhangar ;
     private int vendidosEjecutiva = 0, vendidosEconomica = 0;
     private float recaudado = 0;
-   // private int ocupadosEconomica;
-    //private int ocupadosEjecutiva;
     private float totalRecaudado;
     private String capitan;
-
-    // lista de pasajeros
     private ListaClientes pasajeros = new ListaClientes();
-
+//Constructor de la clase Avion
     public Avion(String nombreCapitan, String origen, String destino, int capacidad,
             int nClaseEjecutiva, int nClaseEconomica, String escala,
             LocalTime horaSalida, LocalTime horaLlegada,
@@ -37,10 +33,7 @@ public class Avion {
         this.costoXAsientoEjecutivo = costoXAsientoEjecutivo;
     }
 
-    /**
-     * Asigna ‘cantidad’ asientos en la sección indicada ("EJECUTIVA" o
-     * "ECONOMICA") Devuelve un array con los números de asiento asignados.
-     */
+    //Metodo declarado para asignar asientos
     public int[] asignarAsientos(int cantidad, String seccion) {
         int inicio, limite, vendidos;
         if (seccion.equalsIgnoreCase("EJECUTIVA")) {
@@ -70,10 +63,13 @@ public class Avion {
 
         return asignados;
     }
+
+    // Método para obtener el total de asientos libres en el avión
     public int totalAsientosLibres() {
         return (capacidad - vendidosEjecutiva - vendidosEconomica);
     }
 
+    // Método para obtener el costo por sección
     public float getCostoPorSeccion(String seccion) {
         if (seccion.equalsIgnoreCase("EJECUTIVA")) {
             return costoXAsientoEjecutivo;
@@ -81,12 +77,18 @@ public class Avion {
             return costoXAsientoEconomico;
         }
     }
+
+    // Método para obtener el total de asientos vendidos
      public int totalAsientosVendidos() {
     return vendidosEconomica + vendidosEjecutiva;
 }
+
+    //Metodo utizado para acumular las ventas
     public void acumularVenta(int cantidad, float monto) {
         recaudado += monto;
     }
+
+    //Metodos utilizados para obtener el total de asientos libres por seccion
     public int asientosLibresEjecutiva() {
         return nClaseEjecutiva - vendidosEjecutiva;
     }
@@ -94,16 +96,12 @@ public class Avion {
         return nClaseEconomica - vendidosEconomica;
     }
 
-    /**
-     * Registra el cliente en la lista de pasajeros de este vuelo
-     */
+    //Metodo utilizado para agregar pasajeros al vuelo
     public void agregarPasajero(Cliente c) {
         pasajeros.insertar(c);
     }
 
-    /**
-     * Devuelve la lista enlazada de pasajeros
-     */
+   //Declaracion de getters y setters
     public ListaClientes getPasajeros() {
         return pasajeros;
     }

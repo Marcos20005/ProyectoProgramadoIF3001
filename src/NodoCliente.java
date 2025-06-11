@@ -1,5 +1,5 @@
-// NodoCliente.java
 public class NodoCliente {
+// Atributos de la clase NodoCliente
     Cliente cliente;
     NodoCliente siguiente;
 
