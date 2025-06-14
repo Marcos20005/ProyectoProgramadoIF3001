@@ -34,7 +34,7 @@ public class Agencia {
         return new Ticket(c, vuelo);
     }
 
-//Metodo declarado para simular el despegue de un vuelo
+    //Metodo declarado para simular el despegue de un vuelo
     public Avion despegue() {
         Avion primero = hangar.obtenerPrimerVuelo();
         if (primero != null) {
@@ -45,53 +45,58 @@ public class Agencia {
     }
 
     //Reporte final de día
-   public String reporteFinDia() {
-    int totalVendidos = 0;
-    int totalLibres = 0;
-    int ocupadosEco = 0;
-    int libresEco = 0;
-    int ocupadosEje = 0;
-    int libresEje = 0;
+    public String reporteFinDia() {
+        int totalVendidos = 0;
+        int totalLibres = 0;
+        int ocupadosEco = 0;
+        int libresEco = 0;
+        int ocupadosEje = 0;
+        int libresEje = 0;
 
-    Avion mayorIngreso = null;
-    float maxIngreso = 0;
+        Avion mayorIngreso = null;
+        float maxIngreso = -1; // Se inicia en -1 para que el primer vuelo siempre sea el mayor al inicio
 
-    NodoHangar aux = avionesTotales.getRaiz();
-    while (aux != null) {
-        Avion av = aux.avion;
-        totalVendidos += av.totalAsientosVendidos();
-        totalLibres += av.totalAsientosLibres();
-        ocupadosEco += av.getVendidosEconomica();
-        libresEco += av.asientosLibresEconomica();
-        ocupadosEje += av.getVendidosEjecutiva();
-        libresEje += av.asientosLibresEjecutiva();
+        NodoHangar aux = avionesTotales.getRaiz();
+        while (aux != null) {
+            Avion av = aux.avion;
+            totalVendidos += av.totalAsientosVendidos();
+            totalLibres += av.totalAsientosLibres();
+            ocupadosEco += av.getVendidosEconomica();
+            libresEco += av.asientosLibresEconomica();
+            ocupadosEje += av.getVendidosEjecutiva();
+            libresEje += av.asientosLibresEjecutiva();
 
-        if (av.getTotalRecaudado() > maxIngreso) {
-            maxIngreso = av.getTotalRecaudado();
-            mayorIngreso = av;
+            // CAMBIO: Se usa getRecaudado() para obtener el valor correcto de los ingresos del vuelo.
+            if (av.getRecaudado() > maxIngreso) {
+                maxIngreso = av.getRecaudado();
+                mayorIngreso = av;
+            }
+
+            aux = aux.siguiente;
         }
 
-        aux = aux.siguiente;
+        String txt = "";
+        txt += "=== REPORTE FIN DE DÍA ===\n";
+        txt += "Vuelos efectuados: " + vuelosEfectuados + "\n";
+        txt += "Total de asientos vendidos: " + totalVendidos + "\n";
+        txt += "Total de asientos desocupados: " + totalLibres + "\n";
+        txt += "Clase Económica - Ocupados: " + ocupadosEco + ", Libres: " + libresEco + "\n";
+        txt += "Clase Ejecutiva - Ocupados: " + ocupadosEje + ", Libres: " + libresEje + "\n";
+        txt += "Monto total recaudado: " + recaudacionTotal + "\n\n";
+
+        if (mayorIngreso != null) {
+            txt += "--- Vuelo con Mayor Ingreso Aportado ---\n";
+            // CAMBIO: Se llama al nuevo método para obtener la información detallada.
+            txt += mayorIngreso.getDetallesReporte();
+        } else {
+            txt += "No se registraron vuelos para generar un reporte de mayor ingreso.\n";
+        }
+
+        return txt;
     }
 
-    String txt = "";
-    txt += "=== REPORTE FIN DE DÍA ===\n";
-    txt += "Vuelos efectuados: " + vuelosEfectuados + "\n";
-    txt += "Total de asientos vendidos: " + totalVendidos + "\n";
-    txt += "Total de asientos desocupados: " + totalLibres + "\n";
-    txt += "Clase Económica - Ocupados: " + ocupadosEco + ", Libres: " + libresEco + "\n";
-    txt += "Clase Ejecutiva - Ocupados: " + ocupadosEje + ", Libres: " + libresEje + "\n";
-    txt += "Monto total recaudado: " + recaudacionTotal + "\n";
 
-    if (mayorIngreso != null) {
-        txt += "--- Vuelo con mayor ingreso ---\n";
-        txt += mayorIngreso.toString(); // Asegúrate que toString() esté bien definido en Avion
-    }
-
-    return txt;
-}
-
-    // Devuelve un arreglo de todos los vuelos aún en hangar 
+    // Devuelve un arreglo de todos los vuelos aún en hangar
     public Avion[] obtenerVuelosEnHangar() {
         int count = 0;
         NodoHangar aux = hangar.getRaiz();

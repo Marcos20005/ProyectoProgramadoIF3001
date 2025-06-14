@@ -3,7 +3,7 @@
 import java.time.LocalTime;
 
 public class Avion {
-//Declaracion de atributos necesarios para el avion
+    //Declaracion de atributos necesarios para el avion
     private String nombreCapitan, origen, destino;
     private int capacidad, nClaseEjecutiva, nClaseEconomica;
     private String escala;
@@ -15,7 +15,8 @@ public class Avion {
     private float totalRecaudado;
     private String capitan;
     private ListaClientes pasajeros = new ListaClientes();
-//Constructor de la clase Avion
+
+    //Constructor de la clase Avion
     public Avion(String nombreCapitan, String origen, String destino, int capacidad,
             int nClaseEjecutiva, int nClaseEconomica, String escala,
             LocalTime horaSalida, LocalTime horaLlegada,
@@ -80,8 +81,8 @@ public class Avion {
 
     // Método para obtener el total de asientos vendidos
      public int totalAsientosVendidos() {
-    return vendidosEconomica + vendidosEjecutiva;
-}
+        return vendidosEconomica + vendidosEjecutiva;
+    }
 
     //Metodo utizado para acumular las ventas
     public void acumularVenta(int cantidad, float monto) {
@@ -101,7 +102,25 @@ public class Avion {
         pasajeros.insertar(c);
     }
 
-   //Declaracion de getters y setters
+    // NUEVO: Método para mostrar el vuelo de forma amigable en el ComboBox.
+    // La interfaz gráfica usará este texto para llenar la lista desplegable.
+    @Override
+    public String toString() {
+        return origen + " -> " + destino + " (" + horaSalida + ")";
+    }
+
+    // NUEVO: Método para generar el texto con la información detallada del vuelo.
+    // Se usará exclusivamente para el reporte final de día.
+    public String getDetallesReporte() {
+        String detalles = "";
+        detalles += "  Capitán: " + nombreCapitan + "\n";
+        detalles += "  Ruta: " + origen + " -> " + destino + "\n";
+        detalles += "  Capacidad: " + capacidad + " asientos\n";
+        detalles += "  Ingreso Total del Vuelo: " + recaudado + "\n";
+        return detalles;
+    }
+
+    //Declaracion de getters y setters
     public ListaClientes getPasajeros() {
         return pasajeros;
     }
@@ -149,8 +168,6 @@ public class Avion {
         return enElhangar;
     }
 
-    
-
     public float getTotalRecaudado() {
         return totalRecaudado;
     }
@@ -166,5 +183,4 @@ public class Avion {
     public void setCapitan(String capitan) {
         this.capitan = capitan;
     }
-
 }
