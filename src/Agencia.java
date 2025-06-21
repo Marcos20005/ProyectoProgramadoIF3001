@@ -14,23 +14,27 @@ public class Agencia {
     }
 
     //Metodo declarado para reservar y agregar un cliente al vuelo
-    public Ticket reservar(String nombre, int pasaporte,
-                          Avion vuelo, int cantidad, String seccion, String tipoPago) {
+    public Ticket reservar(String nombre, int pasaporte, Avion vuelo, int[] asientosSeleccionados, String tipoPago) {
         if (clientes.buscarPorPasaporte(pasaporte) != null) {
             throw new IllegalArgumentException("Ya realizó una reserva.");
         }
-        int[] asig = vuelo.asignarAsientos(cantidad, seccion);
-        float total = vuelo.getCostoPorSeccion(seccion) * cantidad;
-        Cliente c = new Cliente(nombre, pasaporte, cantidad, total, tipoPago);
-        for (int num : asig) {
+        for (int asiento : asientosSeleccionados) {
+            if (vuelo.isAsientoOcupado(asiento)) {
+                throw new IllegalStateException("El asiento " + asiento + " ya está ocupado. Intente de nuevo.");
+            }
+        }
+        float montoTotal = 0;
+        for (int asiento : asientosSeleccionados) {
+            vuelo.ocuparAsiento(asiento);
+            montoTotal += vuelo.getCostoPorAsiento(asiento);
+        }
+        Cliente c = new Cliente(nombre, pasaporte, asientosSeleccionados.length, montoTotal, tipoPago);
+        for (int num : asientosSeleccionados) {
             c.getListaAsiento().insertar(num);
         }
-        // registrar pasajero en el vuelo
         vuelo.agregarPasajero(c);
-
         clientes.insertar(c);
-        vuelo.acumularVenta(cantidad, total);
-        recaudacionTotal += total;
+        recaudacionTotal += montoTotal;
         return new Ticket(c, vuelo);
     }
 
@@ -44,7 +48,7 @@ public class Agencia {
         return primero;
     }
 
-    //Reporte final de día
+    //Reporte final de día (CORREGIDO)
     public String reporteFinDia() {
         int totalVendidos = 0;
         int totalLibres = 0;
@@ -54,19 +58,23 @@ public class Agencia {
         int libresEje = 0;
 
         Avion mayorIngreso = null;
-        float maxIngreso = -1; // Se inicia en -1 para que el primer vuelo siempre sea el mayor al inicio
+        float maxIngreso = -1; 
 
         NodoHangar aux = avionesTotales.getRaiz();
         while (aux != null) {
             Avion av = aux.avion;
-            totalVendidos += av.totalAsientosVendidos();
-            totalLibres += av.totalAsientosLibres();
-            ocupadosEco += av.getVendidosEconomica();
-            libresEco += av.asientosLibresEconomica();
-            ocupadosEje += av.getVendidosEjecutiva();
-            libresEje += av.asientosLibresEjecutiva();
+            
+            int vendidosEje = av.getVendidosEjecutiva();
+            int vendidosEco = av.getVendidosEconomica();
+            
+            ocupadosEje += vendidosEje;
+            ocupadosEco += vendidosEco;
+            totalVendidos += vendidosEje + vendidosEco;
+            
+            libresEje += av.getnClaseEjecutiva() - vendidosEje;
+            libresEco += av.getnClaseEconomica() - vendidosEco;
+            totalLibres += (av.getnClaseEjecutiva() - vendidosEje) + (av.getnClaseEconomica() - vendidosEco);
 
-            // CAMBIO: Se usa getRecaudado() para obtener el valor correcto de los ingresos del vuelo.
             if (av.getRecaudado() > maxIngreso) {
                 maxIngreso = av.getRecaudado();
                 mayorIngreso = av;
@@ -86,7 +94,6 @@ public class Agencia {
 
         if (mayorIngreso != null) {
             txt += "--- Vuelo con Mayor Ingreso Aportado ---\n";
-            // CAMBIO: Se llama al nuevo método para obtener la información detallada.
             txt += mayorIngreso.getDetallesReporte();
         } else {
             txt += "No se registraron vuelos para generar un reporte de mayor ingreso.\n";
@@ -94,7 +101,6 @@ public class Agencia {
 
         return txt;
     }
-
 
     // Devuelve un arreglo de todos los vuelos aún en hangar
     public Avion[] obtenerVuelosEnHangar() {

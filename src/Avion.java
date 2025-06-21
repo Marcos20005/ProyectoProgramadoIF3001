@@ -1,26 +1,22 @@
 
-
 import java.time.LocalTime;
 
 public class Avion {
-    //Declaracion de atributos necesarios para el avion
+
+    // ... (atributos como antes)
     private String nombreCapitan, origen, destino;
     private int capacidad, nClaseEjecutiva, nClaseEconomica;
     private String escala;
     private LocalTime horaSalida, horaLlegada;
     private float costoXAsientoEconomico, costoXAsientoEjecutivo;
-    private boolean enElhangar ;
-    private int vendidosEjecutiva = 0, vendidosEconomica = 0;
-    private float recaudado = 0;
-    private float totalRecaudado;
-    private String capitan;
     private ListaClientes pasajeros = new ListaClientes();
+    private boolean[] estadoAsientos;
 
-    //Constructor de la clase Avion
     public Avion(String nombreCapitan, String origen, String destino, int capacidad,
             int nClaseEjecutiva, int nClaseEconomica, String escala,
             LocalTime horaSalida, LocalTime horaLlegada,
             float costoXAsientoEconomico, float costoXAsientoEjecutivo) {
+        //... (constructor igual)
         this.nombreCapitan = nombreCapitan;
         this.origen = origen;
         this.destino = destino;
@@ -32,100 +28,80 @@ public class Avion {
         this.horaLlegada = horaLlegada;
         this.costoXAsientoEconomico = costoXAsientoEconomico;
         this.costoXAsientoEjecutivo = costoXAsientoEjecutivo;
+        this.estadoAsientos = new boolean[capacidad];
     }
 
-    //Metodo declarado para asignar asientos
-    public int[] asignarAsientos(int cantidad, String seccion) {
-        int inicio, limite, vendidos;
-        if (seccion.equalsIgnoreCase("EJECUTIVA")) {
-            inicio = 1;
-            limite = nClaseEjecutiva;
-            vendidos = vendidosEjecutiva;
-        } else {
-            inicio = nClaseEjecutiva + 1;
-            limite = nClaseEconomica;
-            vendidos = vendidosEconomica;
-        }
-
-        if (vendidos + cantidad > limite) {
-            throw new IllegalStateException("No hay suficientes asientos en " + seccion);
-        }
-
-        int[] asignados = new int[cantidad];
-        for (int i = 0; i < cantidad; i++) {
-            asignados[i] = inicio + vendidos + i;
-        }
-
-        if (seccion.equalsIgnoreCase("EJECUTIVA")) {
-            vendidosEjecutiva += cantidad;
-        } else {
-            vendidosEconomica += cantidad;
-        }
-
-        return asignados;
+    // MODIFICADO: Ahora llama directamente al método de la lista para obtener el total.
+    public float getRecaudado() {
+        return pasajeros.calcularMontoTotal();
     }
 
-    // Método para obtener el total de asientos libres en el avión
-    public int totalAsientosLibres() {
-        return (capacidad - vendidosEjecutiva - vendidosEconomica);
+    // --- El resto de la clase Avion.java (getters, setters, etc.) permanece igual ---
+    // ... (isAsientoOcupado, ocuparAsiento, esAsientoEjecutivo, etc.)
+    public boolean isAsientoOcupado(int numeroAsiento) {
+        return estadoAsientos[numeroAsiento - 1];
     }
 
-    // Método para obtener el costo por sección
-    public float getCostoPorSeccion(String seccion) {
-        if (seccion.equalsIgnoreCase("EJECUTIVA")) {
+    public void ocuparAsiento(int numeroAsiento) {
+        if (!isAsientoOcupado(numeroAsiento)) {
+            estadoAsientos[numeroAsiento - 1] = true;
+        }
+    }
+
+    public boolean esAsientoEjecutivo(int numeroAsiento) {
+        return numeroAsiento <= nClaseEjecutiva;
+    }
+
+    public float getCostoPorAsiento(int numeroAsiento) {
+        if (esAsientoEjecutivo(numeroAsiento)) {
             return costoXAsientoEjecutivo;
         } else {
             return costoXAsientoEconomico;
         }
     }
 
-    // Método para obtener el total de asientos vendidos
-     public int totalAsientosVendidos() {
-        return vendidosEconomica + vendidosEjecutiva;
+    public int getVendidosEjecutiva() {
+        int contador = 0;
+        for (int i = 0; i < nClaseEjecutiva; i++) {
+            if (estadoAsientos[i]) {
+                contador++;
+            }
+        }
+        return contador;
     }
 
-    //Metodo utizado para acumular las ventas
-    public void acumularVenta(int cantidad, float monto) {
-        recaudado += monto;
+    public int getVendidosEconomica() {
+        int contador = 0;
+        for (int i = nClaseEjecutiva; i < capacidad; i++) {
+            if (estadoAsientos[i]) {
+                contador++;
+            }
+        }
+        return contador;
     }
 
-    //Metodos utilizados para obtener el total de asientos libres por seccion
-    public int asientosLibresEjecutiva() {
-        return nClaseEjecutiva - vendidosEjecutiva;
-    }
-    public int asientosLibresEconomica() {
-        return nClaseEconomica - vendidosEconomica;
-    }
-
-    //Metodo utilizado para agregar pasajeros al vuelo
     public void agregarPasajero(Cliente c) {
         pasajeros.insertar(c);
     }
 
-    // NUEVO: Método para mostrar el vuelo de forma amigable en el ComboBox.
-    // La interfaz gráfica usará este texto para llenar la lista desplegable.
     @Override
     public String toString() {
         return origen + " -> " + destino + " (" + horaSalida + ")";
     }
 
-    // NUEVO: Método para generar el texto con la información detallada del vuelo.
-    // Se usará exclusivamente para el reporte final de día.
     public String getDetallesReporte() {
         String detalles = "";
         detalles += "  Capitán: " + nombreCapitan + "\n";
         detalles += "  Ruta: " + origen + " -> " + destino + "\n";
         detalles += "  Capacidad: " + capacidad + " asientos\n";
-        detalles += "  Ingreso Total del Vuelo: " + recaudado + "\n";
+        detalles += "  Ingreso Total del Vuelo: " + getRecaudado() + "\n";
         return detalles;
     }
 
-    //Declaracion de getters y setters
     public ListaClientes getPasajeros() {
         return pasajeros;
     }
 
-    // Getters para reporte e interfaz
     public String getNombreCapitan() {
         return nombreCapitan;
     }
@@ -150,37 +126,15 @@ public class Avion {
         return horaLlegada;
     }
 
-    public int getVendidosEjecutiva() {
-        return vendidosEjecutiva;
+    public int getnClaseEjecutiva() {
+        return nClaseEjecutiva;
     }
 
-    public int getVendidosEconomica() {
-        return vendidosEconomica;
+    public int getnClaseEconomica() {
+        return nClaseEconomica;
     }
 
-    public float getRecaudado() {
-        return recaudado;
-    }
-    public void setEnElHangar(boolean enElhangar) {
-        this.enElhangar = enElhangar;
-    }
-    public boolean isEnElHangar() {
-        return enElhangar;
-    }
-
-    public float getTotalRecaudado() {
-        return totalRecaudado;
-    }
-
-    public void setTotalRecaudado(float totalRecaudado) {
-        this.totalRecaudado = totalRecaudado;
-    }
-
-    public String getCapitan() {
-        return capitan;
-    }
-
-    public void setCapitan(String capitan) {
-        this.capitan = capitan;
+    public int getCapacidad() {
+        return capacidad;
     }
 }
